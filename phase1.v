@@ -16,6 +16,11 @@ r0 = (!w & !x & y &z) | (!w& x& y& !z) | (!w& x& y& z) | (w& !x& !y& z)
 r1 = (!w& !x& y& z) | (!w& x& !y& z) | (!w& x& y& z) | (w& !x& y& z)
   | (w& x& !y& !z) | (w& x& !y& z) | (w& x& y& !z) | (w& x& y& z);
 
+r4 = (!w & !x & y & z) | (!w& x& y& z) | (w& !x& y& z) | (w& x& y& z);
+
+r5 = (!w & !x & !y & !z) | (!w & !x & !y & z) | (!w & !x & y & !z) | (!w & !x & y & z) 
+  | (!w & x & !y & !z) | (w & !x & !y & !z) | (w & x & !y & !z);
+	
 end                                   // Finish the Always block
 
 endmodule                             //Module End
