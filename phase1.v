@@ -1,18 +1,20 @@
 //phase1
 
-module Breadboard	(w,x,y,z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9); //Module Header
+module Breadboard	(w,x,y,z,f0,f1,f2,f3,f4,f5,f6,f7,f8,f9); //Module Header
 input w,x,y,z;                        //Specify inputs
-output r0,r1,r2,r3,r4,r5,r6,r7,r8,r9;                       //Specify outputs
-reg r0,r1,r2,r3,r4,r5,r6,r7,r8,r9;                       //Output is a memory area.
+output f0,f1,f2,f3,f4,f5,f6,f7,f8,f9;                       //Specify outputs
+reg f0,f1,f2,f3,f4,f5,f6,f7,f8,f9                          //Output is a memory area.
 
-always @ ( w,x,y,z,r0,r1,r2,r3,r4,r5,r6,r7,r8,r9) begin      //Create a set of code that works line by line 
+always @ ( w,x,y,z,f0,f1,f2,f3,f4,f5,f6,f7,f8,f9 ) begin      //Create a set of code that works line by line 
                                       // if the variables are used
 
 //(w+y)(z+x)                               //Comment for the formula
-r0 = (w|y)&(z|x);                 //Bitwise operation of the formula
+f0 = (!w & !x & y &z) | (!w& x& y& !z) | (!w& x& y& z) | (w& !x& !y& z)
+  | (w& !x& y& z) | (w& x& !y& !z) | (w& x& !y& z) | (w& x& y& !z) | (w& x& y& z);                 //Bitwise operation of the formula
 
 //w'zx+zy+wx
-r1 = ((!w)&z&x)|(z&y)|(w&x);
+f1 = (!w& !x& y& z) | (!w& x& !y& z) | (!w& x& y& z) | (w& !x& y& z)
+  | (w& x& !y& !z) | (w& x& !y& z) | (w& x& y& !z) | (w& x& y& z);
 
 end                                   // Finish the Always block
 
@@ -43,8 +45,8 @@ module testbench();
   initial begin
    	
   //$display acts like a classic C printf command.
-  $display ("|##|A|B|C|D|F0|F1|F2|F3|F4|F5|F6|F7|F8|F9|");
-  $display ("|==+=+=+=+=+==+==+==+==+==+==+==+==+==+==|");
+  $display ("|##|A|B|C|D|F1|");
+  $display ("|==+=+=+=+=+==|");
   
     //A for loop, with register i being the loop control variable.
 	for (i = 0; i < 16; i = i + 1) 
@@ -57,7 +59,7 @@ module testbench();
 		//Oh, Dr. Becker, do you remember what belongs here? 
 		#60;
 		 	
-		$display ("|%2d|%1d|%1d|%1d|%1d|%2d| %1d| %1d| %1d| %1d| %1d| %1d| %1d| %1d|",i,a,b,c,d,f0,f1,f2,f3,f4,f5,f6,f7,f8,f9);
+		$display ("|%2d|%1d|%1d|%1d| %1d|%1d|%1d|%1d|%1d|%1d|%1d|%1d|%1d|%1d|",i,a,b,c,d,f0,f1,f2,f3,f4,f5,f6,f7,f8,f9);
 		//if(i%4==3) //Every fourth row of the table, put in a marker for easier reading.
 		// $display ("|--+-+-+-+-+--|");//Only one line, does not need a code block
 
