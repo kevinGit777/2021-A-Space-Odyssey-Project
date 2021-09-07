@@ -16,6 +16,12 @@ r0 = (!w & !x & y &z) | (!w& x& y& !z) | (!w& x& y& z) | (w& !x& !y& z)
 r1 = (!w& !x& y& z) | (!w& x& !y& z) | (!w& x& y& z) | (w& !x& y& z)
   | (w& x& !y& !z) | (w& x& !y& z) | (w& x& y& !z) | (w& x& y& z);
 
+//wxy + wxz + wyz + xyz
+r2 = (!w & x & y & z) | (w & !x & y & z) | (w & x & !y & z) | (w & x & y & !z) | (w & x & y & z);
+
+//xy + wz 
+r3 = (!w & x & y & !z) | (!w & x & y & z) | (w & !x & !y & z) | (w & !x & y & z) | (w & x & !y & z) | (w & x & y & !z) | (w & x & y & z);
+
 r4 = (!w & !x & y & z) | (!w& x& y& z) | (w& !x& y& z) | (w& x& y& z);
 
 r5 = (!w & !x & !y & !z) | (!w & !x & !y & z) | (!w & !x & y & !z) | (!w & !x & y & z) 
