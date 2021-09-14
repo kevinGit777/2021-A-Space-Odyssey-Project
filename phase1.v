@@ -26,6 +26,13 @@ r4 = (!w & !x & y & z) | (!w& x& y& z) | (w& !x& y& z) | (w& x& y& z);
 
 r5 = (!w & !x & !y & !z) | (!w & !x & !y & z) | (!w & !x & y & !z) | (!w & !x & y & z) 
   | (!w & x & !y & !z) | (w & !x & !y & !z) | (w & x & !y & !z);
+
+// w'x'yz + w'xyz + wx'yz + wxyz
+r8 = (!w & !x & y & z) | (!w & x & y & z) | (w & !x & y & z) | (w & x & y & z);
+
+//w'x'y'z + w'x'yz' + w'xy'z' + w'xyz + wx'y'z' + wx'yz + wxy'z + wxyz'
+r9 = (!w & !x & !y & z) | (!w & !x & y & !z) | (!w & x & !y & !z) | (!w & x & y & z) | 
+(w & !x & !y & !z) | (w & !x & y & z) | (w & x & !y & z) | (w & x & y & !z);
 	
 end                                   // Finish the Always block
 
