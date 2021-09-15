@@ -27,7 +27,7 @@ r4 = (!w & !x & y & z) | (!w& x& y& z) | (w& !x& y& z) | (w& x& y& z);
 r5 = (!w & !x & !y & !z) | (!w & !x & !y & z) | (!w & !x & y & !z) | (!w & !x & y & z) 
   | (!w & x & !y & !z) | (w & !x & !y & !z) | (w & x & !y & !z);
 
-r6 = (!w & !x & !y & z) | (!w & !x & y & !z) | (!w & !x & y & z) | (!w & x & !y & z) | (w & !x & !y & z) | (w & x & !y & z);
+r6 = (!w & !x & !y & z) | (!w & !x & y & !z) | (!w & !x & y & z) | (!w & x & !y & z) | (w & !x & !y & !z) | (w & x & !y & z);
 	
 r7 = (!w & !x & y & z) | (!w & x & !y & z) | (!w & x & y & !z)| (w & !x & !y & z) | (w & !x & y & !z) | (w & x & !y & !z);
 	
