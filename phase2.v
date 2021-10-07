@@ -67,7 +67,6 @@ module unsign_divide #(parameter WIDTH=16) ( dividend, divisor, quotient, error)
 endmodule
 
 
-
 module BreadBoard (
     input1,
     input2, 
@@ -78,20 +77,22 @@ module BreadBoard (
     input [15:0] input1;
     input [15:0] input2;
     input [3:0] op_code;
-    output[31:0] output1;
-    output[1:0] err_code;
+    output reg[31:0] output1;
+    output reg[1:0] err_code;
 
     reg [31:0] sum;
     reg [31:0] product;
-    reg [31:0] quotient;
+    wire [31:0] quotient;
     reg [31:0] remainder;
-    reg err_1;
-    reg err_2;
+    wire err_0;
+    wire err_1;
 
-    add_sub as(input1, input2, sum, err_code);
-    multiply mul(input1, input2, product);
-    divide dv(input1, input2, quotient, err_code);
-    modulo mod(input1, input2, remainder, err_code);
+
+
+   // add_sub as(input1, input2, sum, err_0);
+   // multiply mul(input1, input2, product);
+    divide dv(input1, input2, quotient, err_1);
+    //modulo mod(input1, input2, remainder, err_1);
 
 always @(*) begin
     case (op_code)
@@ -106,7 +107,7 @@ always @(*) begin
         end 
         3: begin //div 
             output1 = quotient;
-            err_code[1] = err_code;
+            err_code[1] =  err_1;
         end 
         4: begin //mod 
           
