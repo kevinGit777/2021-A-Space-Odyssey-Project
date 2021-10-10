@@ -10,13 +10,13 @@ module modulo(dividend, divisor, remainder, err);
 
     always @(*) begin
         remainder = 0;
+	err = 0;
         t1 = dividend;
         t2 = remainder;
         if(divisor == 0) begin
             err = 1;
         end
         else if(divisor < 0) begin
-            err = 1;
             remainder = dividend;
         end else begin
             while (divisor <= t2) begin
@@ -146,7 +146,7 @@ module Dec4x16(binary,onehot);
 	assign onehot[14]= binary[3]& binary[2]& binary[1]&~binary[0];
 	assign onehot[15]= binary[3]& binary[2]& binary[1]& binary[0];
 	
-endmodule;
+endmodule
 
 module Mux16to1(channels, select, b);
 input [15:0][31:0] channels;
@@ -190,7 +190,7 @@ module BreadBoard (
     reg [31:0] sum;
     wire [31:0] product;
     wire [31:0] quotient;
-    reg [31:0] remainder;
+    wire [31:0] remainder;
     wire err_0;
     wire err_1;
 
@@ -219,6 +219,8 @@ always @(*) begin
             err_code[1] =  err_1;
         end 
         4: begin //mod 
+	    output1 = remainder;
+		err_code[1] = err_1;
           
         end
 
