@@ -199,7 +199,7 @@ module BreadBoard (
    // add_sub as(input1, input2, sum, err_0);
     multiplication mul(input1, input2, product);
     divide dv(input1, input2, quotient, err_1);
-    //modulo mod(input1, input2, remainder, err_1);
+    modulo mod(input1, input2, remainder, err_1);
 
 always @(*) begin
     case (op_code)
