@@ -1,3 +1,19 @@
+//Adder-subtractor module
+module addsub (num1, num2, op, result, error);
+	input [15:0] num1;
+	input [15:0] num2;
+	input [3:0] op;
+	output reg [31:0] result;
+	output reg error;
+
+	always @(num1, num2, op) begin
+		if(op == 0)
+			result = num1 + num2;
+		else
+			result = num1 - num2;
+    end
+endmodule
+
 //Modulus module
 module modulo(dividend, divisor, remainder, err);
     input [15:0] dividend;
