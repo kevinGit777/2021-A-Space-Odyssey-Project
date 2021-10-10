@@ -1,3 +1,33 @@
+//Modulus module
+module modulo(dividend, divisor, remainder, err);
+    input [15:0] dividend;
+    input [15:0] divisor;
+    output reg [31:0] remainder;
+    output reg err;
+
+    reg [15:0] t1; 
+    reg [15:0] t2; 
+
+    always @(*) begin
+        remainder = 0;
+        t1 = dividend;
+        t2 = remainder;
+        if(divisor == 0) begin
+            err = 1;
+        end
+        else if(divisor < 0) begin
+            err = 1;
+            remainder = dividend;
+        end else begin
+            while (divisor <= t2) begin
+                t2 = t1 - divisor;
+                t1 = t2;
+            end
+            remainder = t2;
+        end
+    end
+endmodule
+
 // Module for multiplication
 module multiplication (multiplier, multiplicand, product);
     input [15:0] multiplier;
