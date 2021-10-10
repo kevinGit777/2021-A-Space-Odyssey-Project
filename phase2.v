@@ -158,7 +158,7 @@ module BreadBoard (
     output reg[1:0] err_code;
 
     reg [31:0] sum;
-    reg [31:0] product;
+    wire [31:0] product;
     wire [31:0] quotient;
     reg [31:0] remainder;
     wire err_0;
