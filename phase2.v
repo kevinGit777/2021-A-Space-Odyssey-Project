@@ -1,3 +1,32 @@
+// Module for multiplication
+module multiplication (multiplier, multiplicand, product);
+    input [15:0] multiplier;
+    input [15:0] multiplicand;
+    output reg [31:0] product;
+    reg [4:0] i;
+    reg [31:0] sofar;
+    reg [31:0] half;
+
+    always @(*) begin
+        product = 0;
+        sofar = 0;
+
+        for (i = 15; i > 0; i--) begin
+            sofar = sofar << 1;
+            if (multiplicand[i] == 1)
+            begin
+                sofar = sofar + multiplier;
+            end
+        end
+        sofar = sofar << 1;
+        product = sofar;
+        if (multiplicand[0] == 1)
+        begin
+            product += multiplier;
+        end
+    end
+endmodule
+
 module divide #(
     parameter
     WIDTH=16
@@ -138,7 +167,7 @@ module BreadBoard (
 
 
    // add_sub as(input1, input2, sum, err_0);
-   // multiply mul(input1, input2, product);
+    multiplication mul(input1, input2, product);
     divide dv(input1, input2, quotient, err_1);
     //modulo mod(input1, input2, remainder, err_1);
 
@@ -151,7 +180,9 @@ always @(*) begin
           
         end 
         2: begin // mult
-          
+            output1 = product; 
+	    err_code[0] =  0;
+            err_code[1] =  0;
         end 
         3: begin //div 
             output1 = quotient;
