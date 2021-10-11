@@ -1,16 +1,18 @@
 //Adder-subtractor module
-module addsub (num1, num2, op, result, error);
+module addsub (num1, num2, op, sum);
 	input [15:0] num1;
 	input [15:0] num2;
 	input [3:0] op;
-	output reg [31:0] result;
-	output reg error;
+	output reg [31:0] sum;
+
+    reg [31:0] t1;
 
 	always @(num1, num2, op) begin
 		if(op == 0)
-			result = num1 + num2;
+            t1 = num1 + num2;
 		else
-			result = num1 - num2;
+            t1 = num1 - num2;
+        sum = t1;
     end
 endmodule
 
@@ -203,7 +205,7 @@ module BreadBoard (
     output reg[31:0] output1;
     output reg[1:0] err_code;
 
-    reg [31:0] sum;
+    wire [31:0] sum;
     wire [31:0] product;
     wire [31:0] quotient;
     wire [31:0] remainder;
@@ -212,7 +214,7 @@ module BreadBoard (
 
 
 
-   // add_sub as(input1, input2, sum, err_0);
+    addsub as(input1, input2, op_code, sum);
     multiplication mul(input1, input2, product);
     divide dv(input1, input2, quotient, err_1);
     modulo mod(input1, input2, remainder, err_1);
@@ -220,10 +222,14 @@ module BreadBoard (
 always @(*) begin
     case (op_code)
         0: begin //0000 add
-          
+            output1 = sum;
+        err_code[0] = 0;
+            err_code[1] = 0;
         end
         1: begin //0000 sub
-          
+            output1 = sum;
+        err_code[0] = 0;
+            err_code[1] = 0;
         end 
         2: begin // mult
             output1 = product; 
