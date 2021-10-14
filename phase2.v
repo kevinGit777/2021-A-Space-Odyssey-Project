@@ -3,13 +3,13 @@ module HalfAdder(A,B,carry,sum);
 	input B;
 	output carry;
 	output sum;
-	reg carry;
-	reg sum;
+    wire carry;
+	wire sum;
 
-	always @(*) begin
-		sum = A ^ B;
-		carry = A & B;
-	end
+    assign sum = A ^ B;
+	assign carry = A & B;
+
+
 endmodule
 
 
@@ -19,8 +19,8 @@ module FullAdder(A,B,C,carry,sum);
 	input C;
 	output carry;
 	output sum;
-	reg carry;
-	reg sum;
+	wire carry;
+	wire sum;
 
 	wire c0;
 	wire s0;
@@ -30,12 +30,12 @@ module FullAdder(A,B,C,carry,sum);
 	HalfAdder ha1(A,B,c0,s0);
 	HalfAdder ha2(s0,C,c1,s1);
 
-	always @(*) begin
-		sum = s1;
-		sum = A ^ B ^ C ;
-		carry = c1 | c0 ;
-		carry = ((A ^ B) & C) | (A & B);
-	end
+	assign sum = s1;
+	assign sum = A ^ B ^ C ;
+	assign carry = c1 | c0 ;
+	assign carry = ((A ^ B) & C) | (A & B);
+
+
 endmodule
 
 
