@@ -390,12 +390,14 @@ output      [31:0] b;
 endmodule
 
 module BreadBoard (
+    clk,
     input1,
     input2, 
     op_code,
     output1,
     err_code,
 );
+    input clk;
     input [15:0] input1;
     input [15:0] input2;
     input [3:0] op_code;
@@ -405,6 +407,13 @@ module BreadBoard (
     wire [31:0] product;
     wire [31:0] quotient;
     wire [31:0] remainder;
+    wire [31:0] andout;
+    wire [31:0] orout;
+    wire [31:0] nandout;
+    wire [31:0] norout;
+    wire [31:0] xorout;
+    wire [31:0] xnorout;
+    wire [31:0] notout;
     wire carry;
     wire err_0;
     wire err_1_1;
@@ -412,7 +421,7 @@ module BreadBoard (
     wire [15:0][31:0] channels;
     wire [15:0] onehotMux;
 
-
+    //DFF #(32) Accumulator(clk, ,);
 
     output [31:0] output1;
     output [1:0] err_code;
@@ -421,17 +430,30 @@ module BreadBoard (
     multiplication mul(input1, input2, product);
     divide dv(input1, input2, quotient, err_1_1);
     modulo mod(input1, input2, remainder, err_1_2);
+    AND andop(input1, input2, andout);
+    OR orop(input1, input2, orout);
+    NAND nandop(input1, input2, nandout);
+    NOR norout(input1, input2, norout);
+    XOR xorout(input1, input2, xorout);
+    XNOR xnorout(input1, input2, xnorout);
+    NOT notout(input1, notout);
     Dec4x16 decode(op_code ,onehotMux);
     Mux16to1 mux(channels, onehotMux, output1);
 
+    assign err_code[0] = err_0 & ((op_code ^ 0000 ) | (op_code ^ 0001));
+    assign err_code[1] = err_1_1 | err_1_2;
     assign channels[ 0] = sum;
     assign channels[ 1] = sum;
     assign channels[ 2] = product;
     assign channels[ 3] = quotient;
     assign channels[ 4] = remainder; 
-    assign err_code[0] = err_0 & ((op_code ^ 0000 ) | (op_code ^ 0001));
-    assign err_code[1] = err_1_1 | err_1_2;
-
+    assign channels[ 5] = opand;
+    assign channels[ 6] = opor;
+    assign channels[ 7] = opnand;
+    assign channels[ 8] = opnor;
+    assign channels[ 9] = opxor;
+    assign channels[ 10] = opxnor;
+    assign channels[ 11] = opnot;
 
 /*
     output reg [31:0] output1;
