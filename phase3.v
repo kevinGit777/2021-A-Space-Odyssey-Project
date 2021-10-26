@@ -12,13 +12,7 @@ module DFF(clk,in,out);
         out = in;
 endmodule
 
-module register(input1, output1, clk)
-    input [31:0] input1;
-    input clk;
-    output [31:0] output1;
-endmodule
-
-module AND(A, B, output1)
+module AND(A, B, output1);
     input A;
     input B;
     output output1;
@@ -26,9 +20,9 @@ module AND(A, B, output1)
     always @(*) begin
         output1 = A & B;
     end
-endmodule;
+endmodule
 
-module NAND(A, B, output1)
+module NAND(A, B, output1);
     input A;
     input B;
     output output1;
@@ -36,9 +30,9 @@ module NAND(A, B, output1)
     always @(*) begin
         output1 = !(A & B);
     end
-endmodule;
+endmodule
 
-module NOR(A, B, output1)
+module NOR(A, B, output1);
     input A;
     input B;
     output output1;
@@ -46,9 +40,9 @@ module NOR(A, B, output1)
     always @(*) begin
         output1 = !(A | B);
     end
-endmodule;
+endmodule
 
-module OR(A, B, output1)
+module OR(A, B, output1);
     input A;
     input B;
     output output1;
@@ -56,9 +50,9 @@ module OR(A, B, output1)
     always @(*) begin
         output1 = A | B;
     end
-endmodule;
+endmodule
 
-module XNOR(A, B, output1)
+module XNOR(A, B, output1);
     input A;
     input B;
     output output1;
@@ -66,9 +60,9 @@ module XNOR(A, B, output1)
     always @(*) begin
         output1 = !(A ^ B);
     end
-endmodule;
+endmodule
 
-module XOR(A, B, output1)
+module XOR(A, B, output1);
     input A;
     input B;
     output output1;
@@ -76,16 +70,16 @@ module XOR(A, B, output1)
     always @(*) begin
         output1 = A ^ B;
     end
-endmodule;
+endmodule
 
-module NOT(A, output1)
+module NOT(A, output1);
     input A;
     output output1;
 
     always @(*) begin
         output1 = ~A;
     end
-endmodule;
+endmodule
 
 module HalfAdder(A,B,carry,sum);
 	input A;
@@ -392,16 +386,14 @@ endmodule
 module BreadBoard (
     clk,
     input1,
-    input2, 
     op_code,
     output1,
     err_code,
 );
     input clk;
     input [15:0] input1;
-    input [15:0] input2;
     input [3:0] op_code;
-
+    reg [15:0] input2;
 
     wire [31:0] sum;
     wire [31:0] product;
@@ -420,8 +412,9 @@ module BreadBoard (
     wire err_1_2;
     wire [15:0][31:0] channels;
     wire [15:0] onehotMux;
+    wire [31:0] temp;
 
-    //DFF #(32) Accumulator(clk, ,);
+    DFF #(32) Accumulator(clk, ,);
 
     output [31:0] output1;
     output [1:0] err_code;
@@ -454,49 +447,16 @@ module BreadBoard (
     assign channels[ 9] = opxor;
     assign channels[ 10] = opxnor;
     assign channels[ 11] = opnot;
+    assign channels[ 12] = 32'b11111111111111111111111111111111;
+    assign channels[ 13] = 32'b00000000000000000000000000000000;
+    assign channels[ 14] = input2;
 
-/*
-    output reg [31:0] output1;
-    output reg [1:0] err_code;
-always @(*) begin
-    case (op_code)
-        0: begin //0000 add
-            output1 = sum;
-        err_code[0] = 0;
-            err_code[1] = 0;
-        end
-        1: begin //0000 sub
-            output1 = sum;
-        err_code[0] = 0;
-            err_code[1] = 0;
-        end 
-        2: begin // mult
-            output1 = product; 
-	    err_code[0] =  0;
-            err_code[1] =  0;
-        end 
-        3: begin //div 
-            output1 = quotient;
-            err_code[1] =  err_1_1;
-        end 
-        4: begin //mod 
-	    output1 = remainder;
-		err_code[1] = err_1_2;
-          
-        end
+    input2 = output1[15:0];
 
-        default:begin
-          
-        end 
-            
-    endcase
-
-
-
-end
-*/
-
-    
+    always@(*)
+    begin
+        output1 = temp;
+    end
 endmodule
 
 module Testbench (
@@ -507,8 +467,9 @@ module Testbench (
     wire [1:0] err_code;
     reg [3:0] op_code;
 
-    BreadBoard BB( .input1(input1), 
-    .input2(input2), 
+    BreadBoard BB(
+    clk,
+    .input1(input1), 
     .op_code(op_code),
     .output1(output1), 
     .err_code(err_code));
@@ -521,14 +482,14 @@ module Testbench (
     input2 = 15;
     op_code = 4'b0000;
     #50;
-    $display ("[Input A:%6d, Input B: %6d] [Add:%b] [output:%11d, Error:%b] ", input1, input2, op_code, output1, err_code);
+    $display ("[Input A:%6d, Input B: %6d] [Add:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
 
     $display ("Begin test #2");
     input1 = 11;
     input2 = 15;
     op_code = 4'b0001;
     #50;
-    $display ("[Input A:%6d, Input B: %6d] [Sub:%b] [output:%11d, Error:%b] ", input1, input2, op_code, output1, err_code);
+    $display ("[Input A:%6d, Input B: %6d] [Sub:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
     
 
     $display ("Begin test #3");
@@ -536,7 +497,7 @@ module Testbench (
     input2 = 15;
     op_code = 4'b0010;
     #50;
-    $display ("[Input A:%6d, Input B: %6d] [Mul:%b] [output:%11d, Error:%b] ", input1, input2, op_code, output1, err_code);
+    $display ("[Input A:%6d, Input B: %6d] [Mul:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
     
 
     $display ("Begin test #4");
@@ -544,54 +505,54 @@ module Testbench (
     input2 = 0;
     op_code = 4'b0011;
     #50;
-    $display ("[Input A:%6d, Input B: %6d] [Div:%b] [output:%11d, Error:%b] ", input1, input2, op_code, output1, err_code);
+    $display ("[Input A:%6d, Input B: %6d] [Div:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
     
 
     $display ("Begin test #5");
     input1 = 11;
-    input2 = 0;
+    //input2 = 0;
     op_code = 4'b0100;
     #50;
-    $display ("[Input A:%6d, Input B: %6d] [Mod:%b] [output:%11d, Error:%b] ", input1, input2, op_code, output1, err_code);
+    $display ("[Input A:%6d, Input B: %6d] [Mod:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
 
 
     $display ("Begin test #1");
     input1 = 65000;
-    input2 = 65000;
+    //input2 = 65000;
     op_code = 4'b0000;
     #50;
-    $display ("[Input A:%6d, Input B: %6d] [Add:%b] [output:%11d, Error:%b] ", input1, input2, op_code, output1, err_code);
+    $display ("[Input A:%6d, Input B: %6d] [Add:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
 
     $display ("Begin test #2");
     input1 = 32000;
-    input2 = 16000;
+    //input2 = 16000;
     op_code = 4'b0001;
     #50;
-    $display ("[Input A:%6d, Input B: %6d] [Sub:%b] [output:%11d, Error:%b] ", input1, input2, op_code, output1, err_code);
+    $display ("[Input A:%6d, Input B: %6d] [Sub:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
     
 
     $display ("Begin test #3");
     input1 = 32000;
-    input2 = 16000;
+    //input2 = 16000;
     op_code = 4'b0010;
     #50;
-    $display ("[Input A:%6d, Input B: %6d] [Mul:%b] [output:%11d, Error:%b] ", input1, input2, op_code, output1, err_code);
+    $display ("[Input A:%6d, Input B: %6d] [Mul:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
     
 
     $display ("Begin test #4");
     input1 = 32000;
-    input2 = 16000;;
+    //input2 = 16000;;
     op_code = 4'b0011;
     #50;
-    $display ("[Input A:%6d, Input B: %6d] [Div:%b] [output:%11d, Error:%b] ", input1, input2, op_code, output1, err_code);
+    $display ("[Input A:%6d, Input B: %6d] [Div:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
     
 
     $display ("Begin test #5");
     input1 = 32000;
-    input2 = 16000;
+    //input2 = 16000;
     op_code = 4'b0100;
     #50;
-    $display ("[Input A:%6d, Input B: %6d] [Mod:%b] [output:%11d, Error:%b] ", input1, input2, op_code, output1, err_code);
+    $display ("[Input A:%6d, Input B: %6d] [Mod:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
     
 
     $finish;
