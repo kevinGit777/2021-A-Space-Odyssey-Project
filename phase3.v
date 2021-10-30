@@ -13,9 +13,9 @@ module DFF(clk,in,out);
 endmodule
 
 module AND(A, B, output1);
-    input A;
-    input B;
-    output output1;
+    input [15:0] A;
+    input [15:0] B;
+    output reg [31:0] output1;
 
     always @(*) begin
         output1 = A & B;
@@ -23,9 +23,9 @@ module AND(A, B, output1);
 endmodule
 
 module NAND(A, B, output1);
-    input A;
-    input B;
-    output output1;
+    input [15:0] A;
+    input [15:0] B;
+    output reg [31:0] output1;
 
     always @(*) begin
         output1 = !(A & B);
@@ -33,9 +33,9 @@ module NAND(A, B, output1);
 endmodule
 
 module NOR(A, B, output1);
-    input A;
-    input B;
-    output output1;
+    input [15:0] A;
+    input [15:0] B;
+    output reg [31:0] output1;
 
     always @(*) begin
         output1 = !(A | B);
@@ -43,9 +43,9 @@ module NOR(A, B, output1);
 endmodule
 
 module OR(A, B, output1);
-    input A;
-    input B;
-    output output1;
+    input [15:0] A;
+    input [15:0] B;
+    output reg [31:0] output1;
 
     always @(*) begin
         output1 = A | B;
@@ -53,9 +53,9 @@ module OR(A, B, output1);
 endmodule
 
 module XNOR(A, B, output1);
-    input A;
-    input B;
-    output output1;
+    input [15:0] A;
+    input [15:0] B;
+    output reg [31:0] output1;
 
     always @(*) begin
         output1 = !(A ^ B);
@@ -63,9 +63,9 @@ module XNOR(A, B, output1);
 endmodule
 
 module XOR(A, B, output1);
-    input A;
-    input B;
-    output output1;
+    input [15:0] A;
+    input [15:0] B;
+    output reg [31:0] output1;
 
     always @(*) begin
         output1 = A ^ B;
@@ -73,8 +73,8 @@ module XOR(A, B, output1);
 endmodule
 
 module NOT(A, output1);
-    input A;
-    output output1;
+    input [15:0] A;
+    output reg [31:0] output1;
 
     always @(*) begin
         output1 = ~A;
@@ -363,7 +363,6 @@ input      [15:0] select;
 output      [31:0] b;
 
 
-
 	assign b = ({32{select[15]}} & channels[15]) | 
                ({32{select[14]}} & channels[14]) |
 			   ({32{select[13]}} & channels[13]) |
@@ -412,9 +411,8 @@ module BreadBoard (
     wire err_1_2;
     wire [15:0][31:0] channels;
     wire [15:0] onehotMux;
-    wire [31:0] temp;
 
-    DFF #(32) Accumulator(clk, ,);
+    DFF #(32) Accumulator(clk,,);
 
     output [31:0] output1;
     output [1:0] err_code;
@@ -426,10 +424,10 @@ module BreadBoard (
     AND andop(input1, input2, andout);
     OR orop(input1, input2, orout);
     NAND nandop(input1, input2, nandout);
-    NOR norout(input1, input2, norout);
-    XOR xorout(input1, input2, xorout);
-    XNOR xnorout(input1, input2, xnorout);
-    NOT notout(input1, notout);
+    NOR norop(input1, input2, norout);
+    XOR xorop(input1, input2, xorout);
+    XNOR xnorop(input1, input2, xnorout);
+    NOT notop(input1, notout);
     Dec4x16 decode(op_code ,onehotMux);
     Mux16to1 mux(channels, onehotMux, output1);
 
@@ -440,35 +438,37 @@ module BreadBoard (
     assign channels[ 2] = product;
     assign channels[ 3] = quotient;
     assign channels[ 4] = remainder; 
-    assign channels[ 5] = opand;
-    assign channels[ 6] = opor;
-    assign channels[ 7] = opnand;
-    assign channels[ 8] = opnor;
-    assign channels[ 9] = opxor;
-    assign channels[ 10] = opxnor;
-    assign channels[ 11] = opnot;
+    assign channels[ 5] = andout;
+    assign channels[ 6] = orout;
+    assign channels[ 7] = nandout;
+    assign channels[ 8] = norout;
+    assign channels[ 9] = xorout;
+    assign channels[ 10] = xnorout;
+    assign channels[ 11] = notout;
     assign channels[ 12] = 32'b11111111111111111111111111111111;
     assign channels[ 13] = 32'b00000000000000000000000000000000;
     assign channels[ 14] = input2;
 
-    input2 = output1[15:0];
+
+    /*input2 = output1[15:0];
 
     always@(*)
     begin
         output1 = temp;
-    end
+    end*/
 endmodule
 
 module Testbench (
 );
     reg [15:0] input1;
     reg [15:0] input2;
-    wire signed  [31:0] output1;
+    wire signed [31:0] output1;
     wire [1:0] err_code;
     reg [3:0] op_code;
+    reg clk;
 
     BreadBoard BB(
-    clk,
+    .clk(clk),
     .input1(input1), 
     .op_code(op_code),
     .output1(output1), 
