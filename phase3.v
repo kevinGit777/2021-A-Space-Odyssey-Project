@@ -413,7 +413,7 @@ module BreadBoard (
     wire [15:0] onehotMux;
     wire [31:0] muxout;
     wire [31:0] outval;
-    wire [31:0] feedback;
+    wire [15:0] feedback;
 
     DFF #(32) Accumulator(clk,muxout,outval);
 
