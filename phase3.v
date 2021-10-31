@@ -18,7 +18,8 @@ module AND(A, B, output1);
     output reg [31:0] output1;
 
     always @(*) begin
-        output1 = A & B;
+        output1[15:0] = A & B;
+        output1[31:16] = 0;
     end
 endmodule
 
@@ -28,7 +29,8 @@ module NAND(A, B, output1);
     output reg [31:0] output1;
 
     always @(*) begin
-        output1 = A ~& B;
+        output1[15:0] = A ~& B;
+        output1[31:16] = 0;
     end
 endmodule
 
@@ -38,7 +40,8 @@ module NOR(A, B, output1);
     output reg [31:0] output1;
 
     always @(*) begin
-        output1 = A ~| B;
+        output1[15:0] = A ~| B;
+        output1[31:16] = 0;
     end
 endmodule
 
@@ -48,7 +51,8 @@ module OR(A, B, output1);
     output reg [31:0] output1;
 
     always @(*) begin
-        output1 = A | B;
+        output1[15:0] = A | B;
+        output1[31:16] = 0;
     end
 endmodule
 
@@ -58,7 +62,8 @@ module XNOR(A, B, output1);
     output reg [31:0] output1;
 
     always @(*) begin
-        output1 = A ~^ B;
+        output1[15:0] = A ~^ B;
+        output1[31:16] = 0;
     end
 endmodule
 
@@ -68,7 +73,8 @@ module XOR(A, B, output1);
     output reg [31:0] output1;
 
     always @(*) begin
-        output1 = A ^ B;
+        output1[15:0] = A ^ B;
+        output1[31:16] = 0;
     end
 endmodule
 
@@ -77,7 +83,8 @@ module NOT(A, output1);
     output reg [31:0] output1;
 
     always @(*) begin
-        output1 = ~A;
+        output1[15:0] = ~A;
+        output1[31:16] = 0;
     end
 endmodule
 
@@ -218,7 +225,10 @@ module modulo(dividend, divisor, remainder, err);
     reg [15:0] t2; 
 
     always @(*) begin
-        remainder = dividend % divisor; //This is acceptable since the code was supposed to be like this anyway
+        remainder = dividend % divisor;
+        err = (divisor == 0);
+
+        //This is acceptable since the code was supposed to be like this anyway
         // remainder = 0;
 	    // err = 0;
         // t1 = dividend;
@@ -288,7 +298,7 @@ module divide #(
     unsign_divide redv(reverse, divisor, rv_quotient, OF_flag_2);
 
     always @(*) begin
-        error = OF_flag_1 | OF_flag_2;
+        error = OF_flag_1 | OF_flag_2 | 0;
         reverse = -divisor;
         if (dividend[WIDTH-1] !== divisor[WIDTH-1])
         begin
@@ -436,8 +446,9 @@ module BreadBoard (
     Dec4x16 decode(op_code ,onehotMux);
     Mux16to1 mux(channels, onehotMux, muxout);
 
-    assign err_code[0] = err_0 & ((op_code ^ 0000 ) | (op_code ^ 0001));
-    assign err_code[1] = err_1_1 | err_1_2;
+    assign err_code[0] = err_0 & ((op_code == 4'b0000 ) | (op_code == 4'b0001) | (op_code == 4'b0010 ) | (op_code == 0011) | (op_code == 4'b0100) );
+    assign err_code[1] = ( (op_code == 4'b0000 ) | (op_code == 4'b0001) | (op_code == 4'b0010 ) | (op_code == 4'b0011) | (op_code == 4'b0100) )  
+        & (err_1_1 | err_1_2);
     assign channels[ 0] = sum;
     assign channels[ 1] = sum;
     assign channels[ 2] = product;
@@ -453,8 +464,6 @@ module BreadBoard (
     assign channels[ 12] = 32'b11111111111111111111111111111111;
     assign channels[ 13] = 32'b00000000000000000000000000000000;
     assign channels[ 14] = feedback;
-
-
     assign feedback = outval[15:0];
 
     always@(*)
@@ -467,7 +476,7 @@ module Testbench (
 );
     reg [15:0] input1;
     reg [15:0] input2;
-    wire signed [31:0] output1;
+    wire [31:0] output1;
     wire [1:0] err_code;
     reg [3:0] op_code;
     reg clk;
@@ -577,7 +586,7 @@ module Testbench (
     input1 = 65535;
     op_code = 4'b1000;
     #10;
-    $display ("[Input A:%6d, Feedback: %6d] [NAND:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
+    $display ("[Input A:%6d, Feedback: %6d] [NOR:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
 
     //Preset 
     input1 = 0;
