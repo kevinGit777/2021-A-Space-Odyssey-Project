@@ -411,11 +411,15 @@ module BreadBoard (
     wire err_1_2;
     wire [15:0][31:0] channels;
     wire [15:0] onehotMux;
+    wire [31:0] muxout;
+    wire [31:0] outval;
+    wire [31:0] feedback;
 
-    DFF #(32) Accumulator(clk,,);
+    DFF #(32) Accumulator(clk,muxout,outval);
 
     output [31:0] output1;
     output [1:0] err_code;
+    reg [31:0] output1;
 
     addsub as(.inputA(input1), .inputB(input2), .mode(op_code), .carry(carry), .sum(sum), .overflow(err_0));
     multiplication mul(input1, input2, product);
@@ -429,7 +433,7 @@ module BreadBoard (
     XNOR xnorop(input1, input2, xnorout);
     NOT notop(input1, notout);
     Dec4x16 decode(op_code ,onehotMux);
-    Mux16to1 mux(channels, onehotMux, output1);
+    Mux16to1 mux(channels, onehotMux, muxout);
 
     assign err_code[0] = err_0 & ((op_code ^ 0000 ) | (op_code ^ 0001));
     assign err_code[1] = err_1_1 | err_1_2;
@@ -447,15 +451,15 @@ module BreadBoard (
     assign channels[ 11] = notout;
     assign channels[ 12] = 32'b11111111111111111111111111111111;
     assign channels[ 13] = 32'b00000000000000000000000000000000;
-    assign channels[ 14] = input2;
+    assign channels[ 14] = feedback;
 
 
-    /*input2 = output1[15:0];
+    assign feedback = outval[15:0];
 
     always@(*)
     begin
-        output1 = temp;
-    end*/
+        output1 = muxout;
+    end
 endmodule
 
 module Testbench (
