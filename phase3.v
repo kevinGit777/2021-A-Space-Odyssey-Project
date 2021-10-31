@@ -473,6 +473,19 @@ module Testbench (
     .op_code(op_code),
     .output1(output1), 
     .err_code(err_code));
+	
+    initial begin
+        forever begin
+            clk = 0;
+            #3;
+            $display("CLK:%b",clk);
+            #2;
+            clk = 1;
+            #3;
+            $display("CLK:%b",clk);
+            #2;
+        end
+    end
 
 
     initial begin   	
