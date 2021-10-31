@@ -28,7 +28,7 @@ module NAND(A, B, output1);
     output reg [31:0] output1;
 
     always @(*) begin
-        output1 = !(A & B);
+        output1 = A ~& B;
     end
 endmodule
 
@@ -38,7 +38,7 @@ module NOR(A, B, output1);
     output reg [31:0] output1;
 
     always @(*) begin
-        output1 = !(A | B);
+        output1 = A ~| B;
     end
 endmodule
 
@@ -58,7 +58,7 @@ module XNOR(A, B, output1);
     output reg [31:0] output1;
 
     always @(*) begin
-        output1 = !(A ^ B);
+        output1 = A ~^ B;
     end
 endmodule
 
@@ -218,22 +218,23 @@ module modulo(dividend, divisor, remainder, err);
     reg [15:0] t2; 
 
     always @(*) begin
-        remainder = 0;
-	    err = 0;
-        t1 = dividend;
-        t2 = remainder;
-        if(divisor == 0) begin
-            err = 1;
-        end
-        else if(divisor < 0) begin
-            remainder = dividend;
-        end else begin
-            while (divisor <= t2) begin
-                t2 = t1 - divisor;
-                t1 = t2;
-            end
-            remainder = t2;
-        end
+        remainder = dividend % divisor; //This is acceptable since the code was supposed to be like this anyway
+        // remainder = 0;
+	    // err = 0;
+        // t1 = dividend;
+        // t2 = remainder;
+        // if(divisor == 0) begin
+        //     err = 1;
+        // end
+        // else if(divisor < 0) begin
+        //     remainder = dividend;
+        // end else begin
+        //     while (divisor <= t2) begin
+        //         t2 = t1 - divisor;
+        //         t1 = t2;
+        //     end
+        //     remainder = t2;
+        // end
     end
 endmodule
 
@@ -421,17 +422,17 @@ module BreadBoard (
     output [1:0] err_code;
     reg [31:0] output1;
 
-    addsub as(.inputA(input1), .inputB(input2), .mode(op_code), .carry(carry), .sum(sum), .overflow(err_0));
-    multiplication mul(input1, input2, product);
-    divide dv(input1, input2, quotient, err_1_1);
-    modulo mod(input1, input2, remainder, err_1_2);
-    AND andop(input1, input2, andout);
-    OR orop(input1, input2, orout);
-    NAND nandop(input1, input2, nandout);
-    NOR norop(input1, input2, norout);
-    XOR xorop(input1, input2, xorout);
-    XNOR xnorop(input1, input2, xnorout);
-    NOT notop(input1, notout);
+    addsub as(.inputA(feedback), .inputB(input1), .mode(op_code), .carry(carry), .sum(sum), .overflow(err_0));
+    multiplication mul(input1, feedback, product);
+    divide dv(feedback, input1, quotient, err_1_1);
+    modulo mod(feedback, input1, remainder, err_1_2);
+    AND andop(input1, feedback, andout);
+    OR orop(input1, feedback, orout);
+    NAND nandop(feedback, input1, nandout);
+    NOR norop(input1, feedback, norout);
+    XOR xorop(input1, feedback, xorout);
+    XNOR xnorop(input1, feedback, xnorout);
+    NOT notop(feedback, notout);
     Dec4x16 decode(op_code ,onehotMux);
     Mux16to1 mux(channels, onehotMux, muxout);
 
@@ -481,95 +482,147 @@ module Testbench (
     initial begin
         forever begin
             clk = 0;
-            #3;
-            //$display("CLK:%b",clk);
-            #2;
+            #5;
             clk = 1;
-            #3;
-            //$display("CLK:%b",clk);
-            #2;
+            #5;
         end
     end
 
 
     initial begin   	
     //$display acts like a classic C printf command.
-    $display ("Begin test #1"); //add
-    input1 = 11;
-    input2 = 15;
+    //$display ("Begin test #1");
+    //Initial
+    //$display ("[Input:%6d, Feedback: %6d] [OpCode:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
+
+    //Reset
+    input1 = 0;
+    op_code = 4'b1101;
+    #10;
+    $display ("[Input:%6d, Feedback: %6d] [Reset:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
+
+    //No Op
+    input1 = 0;
+    op_code = 4'b1110;
+    #10;
+    $display ("[Input:%6d, Feedback: %6d] [NoOp:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
+
+    //Add
+    input1 = 7;
     op_code = 4'b0000;
-    #50;
-    $display ("[Input A:%6d, Input B: %6d] [Add:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
-
-    $display ("Begin test #2");
-    input1 = 11;
-    input2 = 15;
+    #5; //FOR SOME REASON THIS HAS TO BE 5 OR ELSE THE PROGRAM DOESNT WORK PROPERLY
+    $display ("[Input A:%6d, Feedback: %6d] [Add:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
+    
+    //Sub
+    input1 = 3;
     op_code = 4'b0001;
-    #50;
-    $display ("[Input A:%6d, Input B: %6d] [Sub:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
+    #10;
+    $display ("[Input A:%6d, Feedback: %6d] [Sub:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
     
-
-    $display ("Begin test #3");
-    input1 = 11;
-    input2 = 15;
+    //Mul
+    input1 = 250;
     op_code = 4'b0010;
-    #50;
-    $display ("[Input A:%6d, Input B: %6d] [Mul:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
+    #10;
+    $display ("[Input A:%6d, Feedback: %6d] [Mul:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
     
-
-    $display ("Begin test #4");
-    input1 = 11;
-    input2 = 0;
+    //Div
+    input1 = 32;
     op_code = 4'b0011;
-    #50;
-    $display ("[Input A:%6d, Input B: %6d] [Div:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
-    
+    #10;
+    $display ("[Input A:%6d, Feedback: %6d] [Div:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
 
-    $display ("Begin test #5");
-    input1 = 11;
-    //input2 = 0;
+    //Mod
+    input1 = 4;
     op_code = 4'b0100;
-    #50;
-    $display ("[Input A:%6d, Input B: %6d] [Mod:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
+    #10;
+    $display ("[Input A:%6d, Feedback: %6d] [Mod:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
+
+    //AND
+    input1 = 32;
+    op_code = 4'b0101;
+    #10;
+    $display ("[Input A:%6d, Feedback: %6d] [AND:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
+
+    //OR
+    input1 = 42;
+    op_code = 4'b0110;
+    #10;
+    $display ("[Input A:%6d, Feedback: %6d] [OR:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
+
+    //NOT
+    input1 = 0;
+    op_code = 4'b1011;
+    #10;
+    $display ("[Input A:%6d, Feedback: %6d] [NOT:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
+
+    //XOR
+    input1 = 65535;
+    op_code = 4'b1001;
+    #10;
+    $display ("[Input A:%6d, Feedback: %6d] [XOR:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
+
+    //XNOR
+    input1 = 65525;
+    op_code = 4'b1010;
+    #10;
+    $display ("[Input A:%6d, Feedback: %6d] [XNOR:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
+
+    //NAND 
+    input1 = 65535;
+    op_code = 4'b0111;
+    #10;
+    $display ("[Input A:%6d, Feedback: %6d] [NAND:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
+
+    //NOR 
+    input1 = 65535;
+    op_code = 4'b1000;
+    #10;
+    $display ("[Input A:%6d, Feedback: %6d] [NAND:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
+
+    //Preset 
+    input1 = 0;
+    op_code = 4'b1100;
+    #10;
+    $display ("[Input A:%6d, Feedback: %6d] [Preset:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
 
 
-    $display ("Begin test #1");
-    input1 = 65000;
-    //input2 = 65000;
-    op_code = 4'b0000;
-    #50;
-    $display ("[Input A:%6d, Input B: %6d] [Add:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
+    // $display ("Begin test #1");
+    // input1 = 65000;
+    // //input2 = 65000;
+    // op_code = 4'b0000;
+    // #50;
+    // $display ("[Input A:%6d, Input B: %6d] [Add:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
 
-    $display ("Begin test #2");
-    input1 = 32000;
-    //input2 = 16000;
-    op_code = 4'b0001;
-    #50;
-    $display ("[Input A:%6d, Input B: %6d] [Sub:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
+    // $display ("Begin test #2");
+    // input1 = 32000;
+    // //input2 = 16000;
+    // op_code = 4'b0001;
+    // #50;
+    // $display ("[Input A:%6d, Input B: %6d] [Sub:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
     
 
-    $display ("Begin test #3");
-    input1 = 32000;
-    //input2 = 16000;
-    op_code = 4'b0010;
-    #50;
-    $display ("[Input A:%6d, Input B: %6d] [Mul:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
+    // $display ("Begin test #3");
+    // input1 = 32000;
+    // //input2 = 16000;
+    // op_code = 4'b0010;
+    // #50;
+    // $display ("[Input A:%6d, Input B: %6d] [Mul:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
     
 
-    $display ("Begin test #4");
-    input1 = 32000;
-    //input2 = 16000;;
-    op_code = 4'b0011;
-    #50;
-    $display ("[Input A:%6d, Input B: %6d] [Div:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
+    // $display ("Begin test #4");
+    // input1 = 32000;
+    // //input2 = 16000;;
+    // op_code = 4'b0011;
+    // #50;
+    // $display ("[Input A:%6d, Input B: %6d] [Div:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
     
 
-    $display ("Begin test #5");
-    input1 = 32000;
-    //input2 = 16000;
-    op_code = 4'b0100;
-    #50;
-    $display ("[Input A:%6d, Input B: %6d] [Mod:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
+    // $display ("Begin test #5");
+    // input1 = 32000;
+    // //input2 = 16000;
+    // op_code = 4'b0100;
+    // #50;
+    // $display ("[Input A:%6d, Input B: %6d] [Mod:%b] [output:%11d, Error:%b] ", input1, op_code, output1, err_code);
     
 
     $finish;
