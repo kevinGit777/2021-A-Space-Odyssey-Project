@@ -478,11 +478,11 @@ module Testbench (
         forever begin
             clk = 0;
             #3;
-            $display("CLK:%b",clk);
+            //$display("CLK:%b",clk);
             #2;
             clk = 1;
             #3;
-            $display("CLK:%b",clk);
+            //$display("CLK:%b",clk);
             #2;
         end
     end
