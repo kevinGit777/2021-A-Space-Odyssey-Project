@@ -7,6 +7,10 @@ Testbench()
             $display("System is OFF")
             continue;
         }
+    for (1 - 10) { // 10 iteration
+        display(strip)
+        #delay 
+    }
     }
 }
 
@@ -95,7 +99,8 @@ strip_mux()
     [0] = {10{get_solid_color(color_code)}; // for solid
     [1] = {10{get_solid_color(color_code)} // for flashing, when even iteration it will be all black[10](0,0,0), 
     [2] = shift_right() // for rainbow
-    rainbow_color = 
+    
+    color_reg
 
     beginon(positive_edge)
     {
