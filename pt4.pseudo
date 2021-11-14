@@ -1,0 +1,117 @@
+Testbench()
+{
+    BreadBoard BB(op_code);
+    while (true) {
+    op_code = takeUserinput;
+        if (opcode == 0 || (Power == 0 && opcode != 1) ) { 
+            $display("System is OFF")
+            continue;
+        }
+    }
+}
+
+BB(){
+    brightness[2:0];
+    //Power; //ON/OFF
+    Mode[1:0]; // 00: solid, 01 flashing, 10 rainbow 
+    Color[2:0];
+    Opcode[3:0];
+    strip[9:0][23:0];
+
+    brightness_mux Mux1(opcode, brightness_mux_out);
+    Mode_mux Mux2(opcode, Mode_mux_out);
+    Color_mux Mux3(opcode, Color_mux_out);
+    strip_mux Mux4(op_code, Mode, Color_code, strip_out)
+
+    brightness = brightness_mux_out;
+    Mode = Mode_mux_out;
+    Color_code = Color_mux_out;
+    strip =strip_out;
+
+}
+
+brightness_mux()
+{
+    [0] = current;
+    [1] = brightness++; //when current = 111, it will be 111
+    [2] = brightness--; // when current = 000, it will be 000
+    
+    if(opcode == 6)
+    {
+        brightness_mux_out = [1];
+    }
+    if (opcode =7) {
+        brightness_mux_out = [2];
+    }
+    else
+    {
+        brightness_mux_out = [0];
+    }
+}
+
+Mode_mux()
+{
+    [0] = current;
+    [1] = Mode++; //when current = 10, it will be 00
+    [2] = Mode--; //when current = 00, it will be 10
+
+    if (op_code = 2) {
+        Mode_mux_out = [1];
+    }else if(op_code = 3)
+    {
+        Mode_mux_out = [2];
+    }
+    else{
+        Mode_mux_out = [0];
+    }
+
+}
+
+Color_mux()
+{
+    [0] = current;
+    [1] = current++;
+    [2] = prev_color;
+
+
+    if (op_code[3] == 1) {
+        prev_color = current;
+        Color_mux_out = op_code[2:0]
+    }else if(op_code = 4){
+        prev_color = current;
+        Color_mux_out = [1];
+    }else if(op_code = 5)
+    {
+        Color_mux_out = [2];
+    }else{
+        Color_mux_out = [0];
+    }
+
+}
+
+strip_mux() 
+{
+    current_iteration; //1 bit
+    [0] = {10{get_solid_color(color_code)}; // for solid
+    [1] = {10{get_solid_color(color_code)} // for flashing, when even iteration it will be all black[10](0,0,0), 
+    [2] = shift_right() // for rainbow
+    rainbow_color = 
+
+    beginon(positive_edge)
+    {
+        current_iteration++;
+        if (mode = 0) {
+            strip_out = [0];
+        }else if (mode =1){
+            strip_out = [1];
+        }else if (mode = 2)
+        {
+            strip_out = [2];
+        }
+    }
+}
+
+get_color(color_code, color_out)
+{
+    channal[0] = [255, 0, 0], [255, 0, 0], [255, 0, 0], [255, 0, 0], [255, 0, 0], [255, 0, 0], [255, 0, 0], [255, 0, 0]
+}
