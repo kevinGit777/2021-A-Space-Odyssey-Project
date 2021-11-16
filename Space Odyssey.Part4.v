@@ -107,29 +107,98 @@ output [2:0] brightness_mux_out;
 endmodule
 
 module Mode_mux (
-    op_code, Mode_mux_out
+    op_code, mode_mux_out
 );
 input  [3:0] op_code;
-output [1:0] Mode_mux_out;
+output [1:0] mode_mux_out;
 
 endmodule
 
 module Color_mux (
-    op_code, Color_mux_out
+    op_code, color_mux_out
 );
 
 input  [3:0] op_code;
-output [2:0] Color_mux_out;
+output [2:0] color_mux_out;
     
 endmodule
 
 module Strip_mux (
-    op_code, Mode, Color_code, clock, strip_out
+    op_code, mode, color_code, clock, strip_out
 );
     input [3:0] op_code;
-    input [2:0] Color_code;
-    input [1:0] Mode;
+    input [2:0] color_code;
+    input [1:0] mode;
     input clock;
+    output reg [9:0][23:0] strip_out;
+
+    
+    wire [2:0][9:0][23:0] channels;
+    reg current_iteration;
+
+    wire[23:0] solid_color;
+    wire [9:0][23:0] rainbow_color;
+    get_solid_color GSC (color_code, solid_color);
+    get_rainbow_color GRC (color_code, rainbow_color, clock);
+    
+    assign channels[0] = {10{solid_color}}; 
+    assign channels[1] = {10 {solid_color & {24 {current_iteration}} } };
+    //assign channels[2] = 
+
+    always @(*) begin
+        /*
+        if (mode == 0) begin
+            strip_out = channels[0];
+        end 
+        if(mode == 1) begin
+            strip_out = channels[1];
+        end
+        if(mode == 2) begin
+          strip_out = channels[2];
+        end
+        */
+        strip_out = channels[mode];
+    end
+
+
+endmodule
+
+module get_solid_color (
+    color_code, solid_color
+);
+    wire [7:0][23:0] channels;
+    input [2:0] color_code;
+    output [23:0] solid_color;
+
+    assign channels[0] = 24'b1111_1111_0000_0000_0000_0000;
+    //TODO: fill in colors
+    
+endmodule
+
+module get_rainbow_color (
+    color_code, strip_out, clk
+);
+    input [2:0] color_code;
+    input clk;
     output [9:0][23:0] strip_out;
 
+    //wire [2:0][7:0][23:0] channels;
+    reg [2:0][7:0][23:0] colors;
+
+    initial begin
+        //TODO: fill in colors
+        //colors[0] = 
+    end
+
+    always @(posedge clk ) begin
+        colors[0] = colors[0] <<< 1;
+        colors[0][0] = colors[0][7];
+
+        colors[1] = colors[1] <<< 1;
+        colors[1][0] = colors[1][7];
+
+        colors[2] = colors[2] <<< 1;
+        colors[2][0] = colors[2][7];
+    end
+    
 endmodule
