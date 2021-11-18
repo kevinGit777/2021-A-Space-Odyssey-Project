@@ -166,7 +166,7 @@ endmodule
 module get_solid_color (
     color_code, solid_color
 );
-    wire [7:0][23:0] channels;
+    wire [7:0][23:0] channels; //8 solid color
     input [2:0] color_code;
     output [23:0] solid_color;
 
@@ -183,14 +183,14 @@ module get_rainbow_color (
     output [9:0][23:0] strip_out;
 
     //wire [2:0][7:0][23:0] channels;
-    reg [2:0][7:0][23:0] colors;
+    reg [2:0][7:0][23:0] colors; 
 
     initial begin
         //TODO: fill in colors
         //colors[0] = 
     end
 
-    always @(posedge clk ) begin
+    always @(posedge clk) begin
         colors[0] = colors[0] <<< 1;
         colors[0][0] = colors[0][7];
 
