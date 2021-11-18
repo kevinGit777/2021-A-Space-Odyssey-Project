@@ -170,8 +170,14 @@ module get_solid_color (
     input [2:0] color_code;
     output [23:0] solid_color;
 
-    assign channels[0] = 24'b1111_1111_0000_0000_0000_0000;
-    //TODO: fill in colors
+    assign channels[0] = 24'b1111_1111_0000_0000_0000_0000; //red
+    assign channels[1] = 24'b00000000_11111111_00000000;    //green
+    assign channels[2] = 24'b00000000_00000000_11111111;    //blue
+    assign channels[3] = 24'b11111111_11111111_11111111;    //yellow
+    assign channels[4] = 24'b11111111_01100100_00000000;    //orange
+    assign channels[5] = 24'b11111111_00000000_11111111;    //pink
+    assign channels[6] = 24'b01100100_00000000_11111111;    //purple
+    assign channels[7] = 24'b11111111_11111111_11111111;    //white
     
 endmodule
 
