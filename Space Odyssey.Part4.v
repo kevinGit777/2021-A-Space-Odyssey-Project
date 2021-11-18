@@ -190,7 +190,7 @@ module get_rainbow_color (
         //colors[0] = 
     end
 
-    always @(posedge clk ) begin
+    always @(posedge clk) begin
         colors[0] = colors[0] <<< 1;
         colors[0][0] = colors[0][7];
 
