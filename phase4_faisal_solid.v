@@ -1,3 +1,5 @@
+`define NUM_LEDS 10
+
 //=============================================
 // DFF
 //=============================================
@@ -94,6 +96,26 @@ module SolidColor (brightness, color_code, solid_color);
     end
 endmodule
 
+module FlashingColor (brightness, color_code, previous, flashed_color);
+    input [3:0] brightness;
+    input [3:0] color_code;
+    input [23:0] previous;
+    output reg [23:0] flashed_color;
+    wire [7:0] r, g, b;
+    reg [7:0] diff;
+    ColorTable ct(color_code, r, g, b);
+
+    always @(*) begin
+        diff = 15 - brightness;
+        flashed_color[7:0] = (17*diff > b) ? 8'b0 : b - (17*diff);
+        flashed_color[15:8] = (17*diff > g) ? 8'b0 : g - (17*diff);
+        flashed_color[23:16] = (17*diff > r) ? 8'b0 : r - (17*diff);
+
+        flashed_color = (previous == 0) ? flashed_color : 0;
+    end
+
+endmodule
+
 module Dec4x16(binary,onehot);
 	input [3:0] binary;
 	output [15:0] onehot;
@@ -118,7 +140,7 @@ module Dec4x16(binary,onehot);
 endmodule
 
 module Mux16to1(channels, select, b);
-input [15:0][31:0] channels;
+input [15:0][23:0] channels;
 input      [15:0] select;
 output      [31:0] b;
 
@@ -142,7 +164,7 @@ output      [31:0] b;
 
 endmodule
 
-module BreadBoard (
+module RGBController (
     clk,
     mode,
     brightness,
@@ -169,15 +191,15 @@ module BreadBoard (
     output [23:0] color_out;
     reg [23:0] color_out;
 
-    Dec4x16 decode(mode ,onehotMux);
+    Dec4x16 decode(mode, onehotMux);
     Mux16to1 mux(channels, onehotMux, muxout);
     SolidColor solid(brightness, color_code, solid_color);
-    //FlashingColor flash(brightness, color_code, feedback)
-    //RainbowColor rainbow(brightness, feedback)
+    FlashingColor flash(brightness, color_code, feedback, flashing_color);
+    //RainbowColor rainbow(brightness, feedback);
 
     assign channels[ 0] = 24'b0; //Off
     assign channels[ 1] = solid_color[23:0];   //solid
-    // assign channels[ 2] = product;
+    assign channels[ 2] = flashing_color;
     // assign channels[ 3] = quotient;
     // assign channels[ 4] = remainder; 
     // assign channels[ 5] = andout;
@@ -187,8 +209,8 @@ module BreadBoard (
     // assign channels[ 9] = xorout;
     // assign channels[ 10] = xnorout;
     // assign channels[ 11] = notout;
-    assign channels[ 12] = 32'b11111111111111111111111111111111;
-    assign channels[ 13] = 32'b00000000000000000000000000000000;
+    //assign channels[ 12] = 32'b11111111111111111111111111111111;
+    //assign channels[ 13] = 32'b00000000000000000000000000000000;
     assign channels[ 14] = feedback;
     assign feedback = outval[23:0];
 
@@ -198,12 +220,39 @@ module BreadBoard (
     end
 endmodule
 
+module BreadBoard(
+    clk,
+    mode,
+    brightness,
+    color_code,
+    strip,
+);
+    input clk;
+    input [1:0] mode;
+    input [3:0] brightness;
+    input [3:0] color_code;
+    wire [23:0] light;
+    output [`NUM_LEDS:0][23:0] strip;
+    reg [3:0] i;
+    
+
+    RGBController leds [`NUM_LEDS:0](
+        .clk(clk),
+        .mode(mode),
+        .brightness(brightness),
+        .color_code(color_code),
+        .color_out(strip));
+
+endmodule
+
 module Testbench (
 );
     reg [1:0] mode;
     reg [3:0] brightness;
     reg [3:0] color_code;
-    wire [23:0] color_out;
+    wire [`NUM_LEDS:0][23:0] strip;
+    reg [3:0] i, x;
+
     reg clk;
 
     BreadBoard BB(
@@ -211,7 +260,7 @@ module Testbench (
     .mode(mode), 
     .brightness(brightness),
     .color_code(color_code),
-    .color_out(color_out));
+    .strip(strip));
 	
     initial begin
         forever begin
@@ -222,31 +271,65 @@ module Testbench (
         end
     end
 
-
     initial begin   	
     //$display acts like a classic C printf command.
     //$display ("Begin test #1");
     //Initial
     //$display ("[Input:%6d, Feedback: %6d] [OpCode:%b] [output:%11d, Error:%b] ", input1, BB.feedback, op_code, output1, err_code);
 
+    $display ("On");
     //Init
     mode = 0;
     brightness = 4'b1111;
     color_code = 4'b0000;
     #5;
-    $display ("[Input:%6d, Feedback: %b] [Brightness:%b] [Color Code:%11d, Color:%24b] ", mode, BB.feedback, brightness, color_code, color_out);
+    for (i = 0; i < `NUM_LEDS; i++) 
+    begin
+    $display ("Led %d: %h", i, strip[i]);
+    end
 
+    $display ("set mode solid");
 
     mode = 1;
     color_code = 4'b0000;
     #5;
-    $display ("[Input:%6d, Feedback: %b] [Brightness:%b] [Color Code:%11d, Color:%b] ", mode, BB.feedback, brightness, color_code, color_out);
+    for (i = 0; i < `NUM_LEDS ; i++) 
+    begin
+    $display ("Led %d: %h", i, strip[i]);
+    end
+
+    $display ("Set color 0101");
 
     brightness = 4'b1111;
     color_code = 4'b0101;
     #5;
-    $display ("[Input:%6d, Feedback: %b] [Brightness:%b] [Color Code:%11d, Color:%b] ", mode, BB.feedback, brightness, color_code, color_out);
+    for (i = 0; i < `NUM_LEDS ; i++) 
+    begin
+    $display ("Led %d: %h", i, strip[i]);
+    end
 
+    $display ("Adjust brightness");
+
+    brightness = 4'b1001;
+    #5;
+    for (i = 0; i < `NUM_LEDS ; i++) 
+    begin
+    $display ("Led %d: %h", i, strip[i]);
+    end
+
+    $display ("Set flashing");
+
+    mode = 2;
+    brightness = 4'b1111;
+    color_code = 4'b0000;
+    for (x = 0; x < 4; x++)
+    begin
+        #10;
+        for (i = 0; i < `NUM_LEDS; i++) 
+        begin
+        $display ("Led %d: %h", i, strip[i]);
+        end
+    end
     
     // //No Op
     // input1 = 0;
