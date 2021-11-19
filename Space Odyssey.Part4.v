@@ -296,6 +296,10 @@ module get_solid_color (
     assign channels[5] = 24'b11111111_00000000_11111111;    //pink
     assign channels[6] = 24'b01100100_00000000_11111111;    //purple
     assign channels[7] = 24'b11111111_11111111_11111111;    //white
+
+    always @(*) begin
+        solid_color = channels[color_code];
+    end
     
     always @(*) begin
         solid_color = channels[color_code];
@@ -313,24 +317,33 @@ module get_rainbow_color (
     //wire [7:0][23:0] channels;
     reg [7:0][9:0][23:0] colors; 
 
+    //wire [2:0][7:0][23:0] channels;
+    reg [7:0][9:0][23:0] colors; 
 
     initial begin
         //TODO: fill in colors
-        
-        colors[0][0] = 'hFF0000;
-        colors[0][1] = 'hFFFF00;
-        colors[0][2] = 'hFFFFFF;
-        colors[0][3] = 'h000000;
-        colors[0][4] = 'hFF0000;
-        colors[0][5] = 'hFFFF00;
-        colors[0][6] = 'hFFFFFF;
-        colors[0][7] = 'h000000;
-        colors[0][8] = 'hFF0000;
-        colors[0][9] = 'hFFFF00;
+        //colors[0] = 
+        colors[0][0] = 24'b00001001_01000000_01110100;
+        colors[0][1] = 24'b00111100_01101001_10010111;
+        colors[0][2] = 24'b01011010_11011011_11111111;
+        colors[0][3] = 24'b11111111_11011101_01001010;
+        colors[0][4] = 24'b11111110_10010000_00000000;
+        colors[0][5] = 24'b10000010_00000010_01100011;
+        colors[0][6] = 24'b11011001_00000011_01101000;
+        colors[0][7] = 24'b11100010_01110001_10100001;
+        colors[0][8] = 24'b11100110_10101000_10111110;
+        colors[0][9] = 24'b11101010_11011110_11011010;
 
-        
-
-        //$display(colors[0]);
+        colors[1][0] = 24'b00101101_01111101_11010010;
+        colors[1][1] = 24'b10010111_11001100_00000100;
+        colors[1][2] = 24'b11101110_10111001_00000010;
+        colors[1][3] = 24'b11110100_01011101_00000001;
+        colors[1][4] = 24'b01000111_01000110_01000111;
+        colors[1][5] = 24'b00111000_00011101_00101010;
+        colors[1][6] = 24'b00000101_00011001_00100011;
+        colors[1][7] = 24'b01010010_00111010_00110100;
+        colors[1][8] = 24'b10111001_11111010_11111000;
+        colors[1][9] = 24'b01001001_00110000_01101011;
     end
 
     always @(*) begin
