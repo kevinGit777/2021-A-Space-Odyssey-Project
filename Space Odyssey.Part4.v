@@ -315,7 +315,7 @@ module get_rainbow_color (
     output reg [9:0][23:0] strip_out;
 
     //wire [7:0][23:0] channels;
-    reg [7:0][9:0][23:0] colors; 
+    //reg [7:0][9:0][23:0] colors; 
 
     //wire [2:0][7:0][23:0] channels;
     reg [7:0][9:0][23:0] colors; 
