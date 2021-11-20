@@ -396,6 +396,62 @@ module get_rainbow_color (
         colors[2][7] = 'hE05961;
         colors[2][8] = 'h432C94;
         colors[2][9] = 'h5831E0;
+
+        colors[3][0] = 'h90C6E8;
+        colors[3][1] = 'h92DBD0;
+        colors[3][2] = 'h96F2CA;
+        colors[3][3] = 'hF29DE7;
+        colors[3][4] = 'hCA9DF2;
+        colors[3][5] = 'hE897B5;
+        colors[3][6] = 'hF2A59D;
+        colors[3][7] = 'h94E8EB;
+        colors[3][8] = 'hEBD988;
+        colors[3][9] = 'h94EBB2;
+
+        colors[4][0] = 'hF0EAAF;
+        colors[4][1] = 'hF7DA8B;
+        colors[4][2] = 'hF56058;
+        colors[4][3] = 'hFF996E;
+        colors[4][4] = 'hFAF9E2;
+        colors[4][5] = 'h77EAF5;
+        colors[4][6] = 'hFAE1F7;
+        colors[4][7] = 'hAFCBF0;
+        colors[4][8] = 'hAFF0D7;
+        colors[4][9] = 'hBCE1FA;
+
+        colors[5][0] = 'h4FF7CD;
+        colors[5][1] = 'h98F5DE;
+        colors[5][2] = 'h78C2AF;
+        colors[5][3] = 'hB5A7FA;
+        colors[5][4] = 'hEBC9F9;
+        colors[5][5] = 'hFACBC8;
+        colors[5][6] = 'hE0918B;
+        colors[5][7] = 'hAD706C;
+        colors[5][8] = 'hF7ECDA;
+        colors[5][9] = 'hE1F7CC;
+
+        colors[6][0] = 'h7776E8;
+        colors[6][1] = 'h7C9AF2;
+        colors[6][2] = 'h7BACDB;
+        colors[6][3] = 'h7CD8F2;
+        colors[6][4] = 'h76E8E3;
+        colors[6][5] = 'hA9F5CF;
+        colors[6][6] = 'hE0918B;
+        colors[6][7] = 'hBFE876;
+        colors[6][8] = 'hE87681;
+        colors[6][9] = 'hB47CF2;
+
+        colors[7][0] = 'h7552E0;
+        colors[7][1] = 'hE02D34;
+        colors[7][2] = 'hE06E41;
+        colors[7][3] = 'hE0D65D;
+        colors[7][4] = 'hAFC7B7;
+        colors[7][5] = 'h54E086;
+        colors[7][6] = 'h397AE0;
+        colors[7][7] = 'h3CC1E0;
+        colors[7][8] = 'h84E038;
+        colors[7][9] = 'hE018A9;
+
         
     end
 
