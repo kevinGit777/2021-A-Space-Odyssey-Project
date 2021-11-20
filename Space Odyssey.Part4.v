@@ -301,9 +301,6 @@ module get_solid_color (
         solid_color = channels[color_code];
     end
     
-    always @(*) begin
-        solid_color = channels[color_code];
-    end
     
 endmodule
 
