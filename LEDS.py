@@ -79,7 +79,7 @@ def parseOutput(colors):
             line = file.readline()
             for j in range(10):
                 line = file.readline()
-                colors[i][j] = "#"+line.rstrip();
+                colors[i][j] = "#"+ adjustBrightness(int(parameters[3], 10), line.rstrip());
     return parameters
 
 
@@ -90,5 +90,31 @@ def switchcolor(colors, window):
             for j in range(10):
                 window["LED"+str(j)].update(button_color = colors[i][j])
     
+def adjustBrightness(brightness, color):
+    
+    first = int(color[:2], 16)
+    fa = int(first/7) * brightness
+    h1 = hex(fa)[2:]
+    s1 = str(h1)
+
+    second = int(color[2:4], 16)
+    sa = int(second/7) * brightness
+    h2 = hex(sa)[2:]
+    s2 = str(h2)
+
+    third = int(color[4:6], 16)
+    ta = int(third/7) * brightness
+    h3 = hex(ta)[2:]
+    s3 = str(h3)
+    if len(s1) == 1:
+        s1 = "0"+s1
+    
+    if len(s2) == 1:
+        s2 = "0"+s2
+
+    if len(s3) == 1:
+        s3 = "0"+s3
+
+    return s1+s2+s3
 
 Battleship()
