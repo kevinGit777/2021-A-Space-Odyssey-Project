@@ -40,11 +40,13 @@ module Testbench (
     op_code = 4'b0001; //Turn On System
     #100; 
     op_code = 4'b0000; // back to no_op
+    #10;
     while (!$feof(inFile) && $fscanf(inFile, "%b\n",in)) 
     begin
         op_code = in;
         #100;
         op_code = 4'b0000;
+        #10;
     end
     $fclose(inFile);
     $finish;
@@ -65,11 +67,14 @@ module BreadBoard (
     wire [1:0] mode;
     wire [2:0] color_code;
     reg [4:0] i;
+    
 
     wire [2:0] brightness_mux_out;
     wire [1:0] mode_mux_out;
     wire [2:0] color_mux_out;
     wire [9:0][23:0] strip_out;
+
+    integer outColors;
     
     Brightness_mux Mux1(op_code, brightness_mux_out );
     Mode_mux Mux2(op_code, mode_mux_out );
@@ -82,23 +87,50 @@ module BreadBoard (
     assign strip = strip_out;
 
     always @(op_code) begin
-        #10;
         $display("OP_CODE:%d, Mode:%d, Color Set:%d, Brightness:%d.", op_code, mode, color_code, brightness);
+        outColors = $fopen("./LED_COLORS.txt", "w");
     for (i = 0; i < 10 ; i++) 
         begin
         #10;
+        /*
         $display("Iteration %2d", i+1);
-        $display ("[%d, %d, %d]", strip[0][23:16], strip[0][15:8], strip[0][7:0]);
-        $display ("[%d, %d, %d]", strip[1][23:16], strip[1][15:8], strip[1][7:0]);       
-        $display ("[%d, %d, %d]", strip[2][23:16], strip[2][15:8], strip[2][7:0]);
-        $display ("[%d, %d, %d]", strip[3][23:16], strip[3][15:8], strip[3][7:0]);
-        $display ("[%d, %d, %d]", strip[4][23:16], strip[4][15:8], strip[4][7:0]);       
-        $display ("[%d, %d, %d]", strip[5][23:16], strip[5][15:8], strip[5][7:0]);
-        $display ("[%d, %d, %d]", strip[6][23:16], strip[6][15:8], strip[6][7:0]);
-        $display ("[%d, %d, %d]", strip[7][23:16], strip[7][15:8], strip[7][7:0]);
-        $display ("[%d, %d, %d]", strip[8][23:16], strip[8][15:8], strip[8][7:0]);
-        $display ("[%d, %d, %d]", strip[9][23:16], strip[9][15:8], strip[9][7:0]);
+        $display ("[%h, %h, %h]", strip[0][23:16], strip[0][15:8], strip[0][7:0]);
+        $display ("[%h, %h, %h]", strip[1][23:16], strip[1][15:8], strip[1][7:0]);       
+        $display ("[%h, %h, %h]", strip[2][23:16], strip[2][15:8], strip[2][7:0]);
+        $display ("[%h, %h, %h]", strip[3][23:16], strip[3][15:8], strip[3][7:0]);
+        $display ("[%h, %h, %h]", strip[4][23:16], strip[4][15:8], strip[4][7:0]);       
+        $display ("[%h, %h, %h]", strip[5][23:16], strip[5][15:8], strip[5][7:0]);
+        $display ("[%h, %h, %h]", strip[6][23:16], strip[6][15:8], strip[6][7:0]);
+        $display ("[%h, %h, %h]", strip[7][23:16], strip[7][15:8], strip[7][7:0]);
+        $display ("[%h, %h, %h]", strip[8][23:16], strip[8][15:8], strip[8][7:0]);
+        $display ("[%h, %h, %h]", strip[9][23:16], strip[9][15:8], strip[9][7:0]);
+        */
+        $fdisplay(outColors,"Iteration %2d", i+1);
+        $fdisplay (outColors, "%h", strip[0]);
+        $fdisplay (outColors, "%h", strip[1]);
+        $fdisplay (outColors, "%h", strip[2]);
+        $fdisplay (outColors, "%h", strip[3]);
+        $fdisplay (outColors, "%h", strip[4]);
+        $fdisplay (outColors, "%h", strip[5]);
+        $fdisplay (outColors, "%h", strip[6]);
+        $fdisplay (outColors, "%h", strip[7]);
+        $fdisplay (outColors, "%h", strip[8]);
+        $fdisplay (outColors, "%h", strip[9]);
+
+        $display ("Iteration %2d", i+1);
+        $display ( "%h", strip[0]);
+        $display ( "%h", strip[1]);
+        $display ( "%h", strip[2]);
+        $display ( "%h", strip[3]);
+        $display ( "%h", strip[4]);
+        $display ( "%h", strip[5]);
+        $display ( "%h", strip[6]);
+        $display ( "%h", strip[7]);
+        $display ( "%h", strip[8]);
+        $display ( "%h", strip[9]);
+        
         end
+        $fclose(outColors);
         $display("\n");
     end
 
@@ -424,6 +456,83 @@ module get_rainbow_color (
         colors[0][7] <= colors[0][6];
         colors[0][8] <= colors[0][7];
         colors[0][9] <= colors[0][8];
+
+        colors[1][0] <= colors[1][9]; //all assign concurrenly
+        colors[1][1] <= colors[1][0];
+        colors[1][2] <= colors[1][1];
+        colors[1][3] <= colors[1][2];
+        colors[1][4] <= colors[1][3];
+        colors[1][5] <= colors[1][4];
+        colors[1][6] <= colors[1][5];
+        colors[1][7] <= colors[1][6];
+        colors[1][8] <= colors[1][7];
+        colors[1][9] <= colors[1][8];
+
+        colors[2][0] <= colors[2][9]; //all assign concurrenly
+        colors[2][1] <= colors[2][0];
+        colors[2][2] <= colors[2][1];
+        colors[2][3] <= colors[2][2];
+        colors[2][4] <= colors[2][3];
+        colors[2][5] <= colors[2][4];
+        colors[2][6] <= colors[2][5];
+        colors[2][7] <= colors[2][6];
+        colors[2][8] <= colors[2][7];
+        colors[2][9] <= colors[2][8];
+
+        colors[3][0] <= colors[3][9]; //all assign concurrenly
+        colors[3][1] <= colors[3][0];
+        colors[3][2] <= colors[3][1];
+        colors[3][3] <= colors[3][2];
+        colors[3][4] <= colors[3][3];
+        colors[3][5] <= colors[3][4];
+        colors[3][6] <= colors[3][5];
+        colors[3][7] <= colors[3][6];
+        colors[3][8] <= colors[3][7];
+        colors[3][9] <= colors[3][8];
+
+        colors[4][0] <= colors[4][9]; //all assign concurrenly
+        colors[4][1] <= colors[4][0];
+        colors[4][2] <= colors[4][1];
+        colors[4][3] <= colors[4][2];
+        colors[4][4] <= colors[4][3];
+        colors[4][5] <= colors[4][4];
+        colors[4][6] <= colors[4][5];
+        colors[4][7] <= colors[4][6];
+        colors[4][8] <= colors[4][7];
+        colors[4][9] <= colors[4][8];
+
+        colors[5][0] <= colors[5][9]; //all assign concurrenly
+        colors[5][1] <= colors[5][0];
+        colors[5][2] <= colors[5][1];
+        colors[5][3] <= colors[5][2];
+        colors[5][4] <= colors[5][3];
+        colors[5][5] <= colors[5][4];
+        colors[5][6] <= colors[5][5];
+        colors[5][7] <= colors[5][6];
+        colors[5][8] <= colors[5][7];
+        colors[5][9] <= colors[5][8];
+
+        colors[6][0] <= colors[6][9]; //all assign concurrenly
+        colors[6][1] <= colors[6][0];
+        colors[6][2] <= colors[6][1];
+        colors[6][3] <= colors[6][2];
+        colors[6][4] <= colors[6][3];
+        colors[6][5] <= colors[6][4];
+        colors[6][6] <= colors[6][5];
+        colors[6][7] <= colors[6][6];
+        colors[6][8] <= colors[6][7];
+        colors[6][9] <= colors[6][8];
+
+        colors[7][0] <= colors[7][9]; //all assign concurrenly
+        colors[7][1] <= colors[7][0];
+        colors[7][2] <= colors[7][1];
+        colors[7][3] <= colors[7][2];
+        colors[7][4] <= colors[7][3];
+        colors[7][5] <= colors[7][4];
+        colors[7][6] <= colors[7][5];
+        colors[7][7] <= colors[7][6];
+        colors[7][8] <= colors[7][7];
+        colors[7][9] <= colors[7][8];
         //$display("cycle.");
     end
         
