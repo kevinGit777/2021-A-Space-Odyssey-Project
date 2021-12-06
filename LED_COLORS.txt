@@ -1,0 +1,110 @@
+Iteration  1
+7552e0
+e02d34
+e06e41
+e0d65d
+afc7b7
+54e086
+397ae0
+3cc1e0
+84e038
+e018a9
+Iteration  2
+7552e0
+e02d34
+e06e41
+e0d65d
+afc7b7
+54e086
+397ae0
+3cc1e0
+84e038
+e018a9
+Iteration  3
+7552e0
+e02d34
+e06e41
+e0d65d
+afc7b7
+54e086
+397ae0
+3cc1e0
+84e038
+e018a9
+Iteration  4
+7552e0
+e02d34
+e06e41
+e0d65d
+afc7b7
+54e086
+397ae0
+3cc1e0
+84e038
+e018a9
+Iteration  5
+7552e0
+e02d34
+e06e41
+e0d65d
+afc7b7
+54e086
+397ae0
+3cc1e0
+84e038
+e018a9
+Iteration  6
+7552e0
+e02d34
+e06e41
+e0d65d
+afc7b7
+54e086
+397ae0
+3cc1e0
+84e038
+e018a9
+Iteration  7
+7552e0
+e02d34
+e06e41
+e0d65d
+afc7b7
+54e086
+397ae0
+3cc1e0
+84e038
+e018a9
+Iteration  8
+7552e0
+e02d34
+e06e41
+e0d65d
+afc7b7
+54e086
+397ae0
+3cc1e0
+84e038
+e018a9
+Iteration  9
+7552e0
+e02d34
+e06e41
+e0d65d
+afc7b7
+54e086
+397ae0
+3cc1e0
+84e038
+e018a9
+Iteration 10
+7552e0
+e02d34
+e06e41
+e0d65d
+afc7b7
+54e086
+397ae0
+3cc1e0
+84e038
+e018a9
