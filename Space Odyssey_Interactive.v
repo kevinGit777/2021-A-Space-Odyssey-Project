@@ -89,6 +89,8 @@ module BreadBoard (
     always @(op_code) begin
         $display("OP_CODE:%d, Mode:%d, Color Set:%d, Brightness:%d.", op_code, mode, color_code, brightness);
         outColors = $fopen("./LED_COLORS.txt", "w");
+        $fdisplay(outColors, "%d %d %d %d", op_code, mode, color_code, brightness);
+        
     for (i = 0; i < 10 ; i++) 
         begin
         #10;
@@ -116,7 +118,7 @@ module BreadBoard (
         $fdisplay (outColors, "%h", strip[7]);
         $fdisplay (outColors, "%h", strip[8]);
         $fdisplay (outColors, "%h", strip[9]);
-
+        /*
         $display ("Iteration %2d", i+1);
         $display ( "%h", strip[0]);
         $display ( "%h", strip[1]);
@@ -128,7 +130,7 @@ module BreadBoard (
         $display ( "%h", strip[7]);
         $display ( "%h", strip[8]);
         $display ( "%h", strip[9]);
-        
+        */
         end
         $fclose(outColors);
         $display("\n");
